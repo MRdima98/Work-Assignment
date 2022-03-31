@@ -25,30 +25,19 @@ result=re.findall('<h3 class="news-title area-primopiano"(.*)</a></h3>',content)
 #svuoto il file
 open('ansa.txt','w').close()
 
-
 def firstFiveNews(result,s):
     f = open("ansa.txt",'a',encoding='utf-8')
-    if(s==""):
-        for i in range(0,5):
-            if('<br>' in re.findall('.html">(.*)',result[i])[0]):
+    for i in range(0,5):
+        tmp=re.findall('.html">(.*)',result[i])[0]
+        if(s in tmp):
+            if('<br>' in tmp):
                 f.write(re.findall('.html">(.*)<br>',result[i])[0])
                 f.write('. ')
                 f.write(re.findall('<br>(.*)',result[i])[0])
                 f.write('\n')
             else:
-                f.write(re.findall('.html">(.*)',result[i])[0])
+                f.write(tmp)
                 f.write('\n')
-    else:
-        for i in range(0,5):
-            if(s in result[i]):
-                if('<br>' in re.findall('.html">(.*)',result[i])[0]):
-                    f.write(re.findall('.html">(.*)<br>',result[i])[0])
-                    f.write('. ')
-                    f.write(re.findall('<br>(.*)',result[i])[0])
-                    f.write('\n')
-                else:    
-                    f.write(re.findall('.html">(.*)',result[i])[0])
-                    f.write('\n')
     f.close()
 
 if __name__ == "__main__":
