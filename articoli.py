@@ -13,41 +13,42 @@ import urllib.request
 import re
 from wsgiref.util import request_uri
 
-# scarica su fil l'html del sito
-urllib.request.urlretrieve("https://www.ansa.it/", "ansa.txt")
-#urllib.request.urlretrieve("https://www.ansa.it/", "bug.txt")
-
-# cerca tutti i titoli
-with open('ansa.txt', encoding='utf-8', errors='ignore') as f:
-    content = f.read()
-
-result=re.findall('<h3 class="news-title area-primopiano"(.*)</a></h3>',content)
-
-#svuoto il file
-open('ansa.txt','w').close()
-
 def firstFiveNews(result,s):
+    '''
+    Scrive a file le prime 5 stringhe presenti in una lista
+    Specificando una stringa, scrive solo le stringhe che contengono quella specificata (all'interno delle prime 5)
+    '''
     f = open("ansa.txt",'a',encoding='utf-8')
     for i in range(0,5):
         cleanS=cleanString(result[i],i)
-        if(s in cleanS):
+        if re.search(s,cleanS,re.IGNORECASE):
             f.write(cleanS)
     f.close()
 
 def cleanString(s,i):
     '''
-    Funzione che filtra il link e formatta correttamente il ritorno a capo
+    Rimuove la parte html di link e formatta correttamente il ritorno a capo
     '''
     s=re.findall('.html">(.*)',s)[0]
-    if('<br>' in s):
+    if '<br>' in s:
         s1=re.findall('(.*)<br>',s)[0]
         s2=re.findall('<br>(.*)',s)[0]
         s=s1+'\n'+s2
-    if('<br />' in s):
+    if '<br />' in s:
         s1=re.findall('(.*)<br />',s)[0]
         s2=re.findall('<br />(,*)',s)[0]
         s=s1+'\n'+s2 
     return 'Notizia '+str(i+1)+':\n'+s+'\n\n'
 
 if __name__ == "__main__":
+    urllib.request.urlretrieve("https://www.ansa.it/", "ansa.txt")
+
+    with open('ansa.txt', encoding='utf-8', errors='ignore') as f:
+        content = f.read()
+
+    result=re.findall('<h3 class="news-title area-primopiano"(.*)</a></h3>',content)
+
+    open('ansa.txt','w').close()
+
+    print()
     firstFiveNews(result,input("Digitare la stringa da cercare nei primi 5 ariticoli o premere enter: "))
